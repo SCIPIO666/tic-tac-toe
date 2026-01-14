@@ -158,6 +158,41 @@ function createGame(size = 3, winningRowSize = 3, p1Name, p2Name = "COMPUTER", p
     };
 }
 
-const myGame = createGame(5, 5, "Joy", "Janet", false);
+//controller
+const boardElement = document.getElementById('board');
+const statusElement = document.getElementById('status');
+let game = createGame(5, 4, "You", "AI", true);
 
-console.log(myGame.playMove(0)); // Joy plays at index 0
+function renderBoard() {
+    boardElement.innerHTML = ''; // Clear board
+    
+    game.state.gameBoard.forEach((cell, index) => {
+        const cellDiv = document.createElement('div');
+        cellDiv.classList.add('cell');
+        if (cell) cellDiv.classList.add('taken');
+        cellDiv.textContent = cell;
+        
+        // Handle Clicks
+        cellDiv.onclick = () => {
+            const result = game.playMove(index);
+            updateUI(result);
+        };
+        
+        boardElement.appendChild(cellDiv);
+    });
+}
+
+function updateUI(result) {
+    renderBoard();
+    
+    if (result.status === "win") {
+        statusElement.textContent = `${result.winner} Wins!`;
+    } else if (result.status === "draw") {
+        statusElement.textContent = "It's a Draw!";
+    } else {
+        statusElement.textContent = `${game.state.currentPlayer.name}'s Turn`;
+    }
+}
+
+// Start the game
+renderBoard();
